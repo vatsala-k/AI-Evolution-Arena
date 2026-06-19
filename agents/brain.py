@@ -9,10 +9,10 @@ class Brain:
         if genome is not None:
             self.from_genome(genome)
         else:
-            self.weights1=np.random.randn(input_size,hidden_size)
-            self.bias1=np.random.randn(hidden_size)
-            self.weights2=np.random.randn(hidden_size,output_size)
-            self.bias2=np.random.randn(output_size)
+            self.weights1=np.random.randn(input_size,hidden_size)*0.5
+            self.bias1=np.random.randn(hidden_size)*0.1
+            self.weights2=np.random.randn(hidden_size,output_size)*0.5
+            self.bias2=np.random.randn(output_size)*0.1
 
     def relu(self,x):
         return np.maximum(0,x)

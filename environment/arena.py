@@ -51,21 +51,23 @@ class Arena:
             if food is None:
                 continue
             fx,fy=food
-            angle_to_food=math.atan2(fx-creature.x, fy-creature.y)
+            angle_to_food=math.atan2(fy-creature.y, fx-creature.x)
             distance_to_food=min(dist_food/200,1)
-            angle_norm=(angle_to_food+math.pi)/(2*math.pi)
-            distance_to_enemy=1
+            angle_norm=(angle_to_food % (2*math.pi))/(2*math.pi)
+
+            nearest_enemy_dist=self.nearest_enemy_distance(creature)
+            distance_to_enemy=min(nearest_enemy_dist/200,1.0)
+
             inputs=creature.perceive(distance_to_food,angle_norm,distance_to_enemy)
             creature.update(inputs)
+            
             if dist_food<10:
                 creature.health+=10
                 creature.food_collected+=1
                 self.foods.remove(food)
             if len(self.foods) == 0:
                 self.spawn_food()     
-            nearest_enemy_dist=self.nearest_enemy_distance(creature)
-            distance_to_enemy=min(nearest_enemy_dist/200,1.0)
-            inputs=creature.perceive(distance_to_food,angle_norm,distance_to_enemy)
+
 
     def nearest_enemy_distance(self,creature):
         min_dist=float("inf")

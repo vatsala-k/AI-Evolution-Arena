@@ -10,11 +10,15 @@ class GeneticAlgorithm:
 
     def calculate_fitness(self, creatures):
         for creature in creatures:
-            creature.fitness = (creature.food_collected + creature.survival_time * 0.01)
+            creature.fitness = (creature.food_collected * 10 + creature.survival_time * 0.01)
 
     def select_parents(self, creatures, num_parents):
         creatures = sorted(creatures, key=lambda c: c.fitness, reverse=True)
         return creatures[:num_parents]
+    
+    def tournament_select(self,parents,k=3):
+         competitors=random.sample(parents, min(k,len(parents)))
+         return max(competitors, key=lambda c:c.fitness)
 
     def crossover(self, genome1, genome2):
         child_genome = []
@@ -38,12 +42,12 @@ class GeneticAlgorithm:
         #parents = self.select_parents(creatures, population_size // 4)
         #new_population = []
         self.calculate_fitness(creatures)
-        print(f"Max fitness: {max(c.fitness for c in creatres):.2f}|" 
+        print(f"Max fitness: {max(c.fitness for c in creatures):.2f}|" 
               f"Avg: {sum(c.fitness for c in creatures)/len(creatures):.2f}")
         parents= self.select_parents(creatures, population_size//4)
 
         #elitism-carry top n without mutation
-        elite_count=max(1, int(poulation_size*ELITE_FRACTION))
+        elite_count=max(1, int(population_size*ELITE_FRACTION))
         elites=parents[:elite_count]
         new_population=[]
         for elite in elites:
@@ -55,11 +59,9 @@ class GeneticAlgorithm:
             new_population.append(child)
 
         while len(new_population) < population_size:
-            def tournament_select(self,parents,k=3):
-                competitors=random.sample(parents, min(k,len(parents)))
-                return max(competitors, key=lambda c:c.fitness)
             parent1=self.tournament_select(parents)
             parent2=self.tournament_select(parents)
+            genome1=parent1.get_genome()
             genome2 = parent2.get_genome()
             child_genome = self.crossover(genome1, genome2)
             child_genome = self.mutate(child_genome)    # Bug 2 fix: mutate not mutation
